@@ -21,20 +21,20 @@ def update_random():
     new_action = choice(["talk", "listen", "ignore"])
     G.nodes[node_to_update]["action"] = new_action
 
-    # updates the neighbors of the node by taking away the old score given by the central node and add the
-    # new score added by the central node
-    for nbr in nbrs:
-        print(old_action)
-        old_score = payoff_matrix[action_lookup[old_action]][action_lookup["talk"]]
-        G.nodes[nbr]["score"] -= old_score[1]
-
-        new_score = payoff_matrix[action_lookup["talk"]][action_lookup["talk"]]
-        G.nodes[nbr]["score"] += new_score[1]
-
     # gets all the actions that the neighbors of the central node
     nbr_actions = []
     for nbr in nbrs:
         nbr_actions.append(G.nodes[nbr]["action"])
+
+    # updates the neighbors of the node by taking away the old score given by the central node and add the
+    # new score added by the central node
+    for nbr in nbrs:
+        print(old_action)
+        old_score = payoff_matrix[action_lookup[old_action]][action_lookup[nbr_actions[nbr]]]
+        G.nodes[nbr]["score"] -= old_score[1]
+
+        new_score = payoff_matrix[action_lookup[new_action]][action_lookup[nbr_actions[nbr]]]
+        G.nodes[nbr]["score"] += new_score[1]
 
     # updates the score for the central node by adding the scores given by the neighbors
     G.nodes[node_to_update]["score"] = 0
@@ -44,14 +44,19 @@ def update_random():
 
 
 def print_scores():
-    for i in G.nodes():
-        list = []
-        for i in G.neighbors(i):
-            list.append(i+1)
-        print(i)
-        print(G.nodes[i])
-        print(list)
-
+    nodes = list(G.nodes())
+    for node in nodes:
+        nbrs = []
+        for i in G.neighbors(node):
+            nbrs.append(i+1)
+        print(node)
+        print(G.nodes[node])
+        print(nbrs)
+    sum = 0
+    for node in nodes:
+        sum += G.nodes[node]["score"]
+    print("TOTAL SCORE: ", sum)
+    print("AVG: SCORE: ", sum / len(nodes))
 
 G = nx.watts_strogatz_graph(12, 2, 0)
 
@@ -60,8 +65,6 @@ nodes = list(G.nodes())
 for node in nodes:
     G.nodes[node]["score"] = 0
     G.nodes[node]["action"] = choice(["talk", "listen", "ignore"])
-
-print_scores()
 
 for node in nodes:
     nbrs = G.neighbors(node)
