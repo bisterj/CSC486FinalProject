@@ -1,5 +1,5 @@
 from random import choice
-
+from copy import deepcopy
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -259,13 +259,34 @@ def main():
     #     data.append(sum)
     #     random_update(G)
 
-    # gathers average score at each update function call
-    for i in range(100):
-        avg = get_avg_score(G)
-        data.append(avg)
-        greedy_update(G)
-    # PLots a line graph
-    plot_line(data)
+    # # gathers average score at each update function call
+    # for i in range(100):
+    #     avg = get_avg_score(G)
+    #     data.append(avg)
+    #     greedy_update(G)
+    # # PLots a line graph
+    # plot_line(data)
+
+    data = {"random": [], "greedy": [], "maximize": []}
+    original = deepcopy(G)
+    for i in range(1000):
+        for i in range(100):
+            random_update(G)
+        data["random"].append(get_avg_score(G))
+        G = original
+
+        for i in range(100):
+            greedy_update(G)
+        data["greedy"].append(get_avg_score(G))
+        G = original
+
+        for i in range(100):
+            maximize_update(G)
+        data["maximize"].append(get_avg_score(G))
+        G = original
+
+    print(data)
+
 
     # # Calls the function to see what the graph looks like and what the total score is and average score
     # print_scores(G)
