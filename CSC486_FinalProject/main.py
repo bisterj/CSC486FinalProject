@@ -202,14 +202,6 @@ def get_score(G, node):
     return G.nodes[node]["score"]
 
 
-def get_total_score(G):
-    nodes = list(G.nodes())
-    sum = 0
-    for node in nodes:
-        sum += get_score(G, node)
-    return sum
-
-
 def get_avg_score(G):
     nodes = list(G.nodes)
     sum = 0
@@ -223,57 +215,9 @@ def plot_line(y_values):
     for i in range(len(y_values)):
         x_axis.append(i + 1)
     plt.plot(x_axis, y_values)
-    plt.title('Average Score per Node Over Time')
+    plt.title('Total Score of Network Over Time')
     plt.xlabel('Steps')
-    plt.ylabel('Average')
-    plt.show()
-
-
-def plot_box_totals(G):
-    data = {"random": [], "greedy": [], "maximize": []}
-    original = deepcopy(G)
-    for i in range(1000):
-        for i in range(100):
-            random_update(G)
-        data["random"].append(get_total_score(G))
-        G = original
-
-        for i in range(100):
-            greedy_update(G)
-        data["greedy"].append(get_total_score(G))
-        G = original
-
-        for i in range(100):
-            maximize_update(G)
-        data["maximize"].append(get_total_score(G))
-        G = original
-
-    plt.boxplot([data["random"], data["greedy"], data["maximize"]], labels=["Random", "Greedy", "Maximize"])
-    plt.title("Total scores for update algorithms")
-    plt.show()
-
-
-def plot_box_avgs(G):
-    data = {"random": [], "greedy": [], "maximize": []}
-    original = deepcopy(G)
-    for i in range(1000):
-        for i in range(100):
-            random_update(G)
-        data["random"].append(get_avg_score(G))
-        G = original
-
-        for i in range(100):
-            greedy_update(G)
-        data["greedy"].append(get_avg_score(G))
-        G = original
-
-        for i in range(100):
-            maximize_update(G)
-        data["maximize"].append(get_avg_score(G))
-        G = original
-
-    plt.boxplot([data["random"], data["greedy"], data["maximize"]], labels=["Random", "Greedy", "Maximize"])
-    plt.title("Averages for update algorithms")
+    plt.ylabel('Total Score')
     plt.show()
 
 
@@ -308,24 +252,47 @@ def main():
 
     # # iterates the update 100 times
     # for i in range(100):
-    #     data.append(get_total_score(G))
-    #     maximize_update(G)
+    #     # calculates the total score of the network
+    #     sum = 0
+    #     for node in nodes:
+    #         sum += get_score(G, node)
+    #     data.append(sum)
+    #     random_update(G)
 
     # # gathers average score at each update function call
     # for i in range(100):
     #     avg = get_avg_score(G)
     #     data.append(avg)
-    #     maximize_update(G)
-    #
-    # # Plots a line graph
+    #     greedy_update(G)
+    # # PLots a line graph
     # plot_line(data)
 
-    # plot_box_totals(G)
+    data = {"random": [], "greedy": [], "maximize": []}
+    original = deepcopy(G)
+    for i in range(1000):
+        for i in range(100):
+            random_update(G)
+        data["random"].append(get_avg_score(G))
+        G = original
 
-    # Calls the function to see what the graph looks like and what the total score is and average score
-    pos = nx.spring_layout(G)
-    nx.draw_networkx(G, pos)
-    plt.show()
+        for i in range(100):
+            greedy_update(G)
+        data["greedy"].append(get_avg_score(G))
+        G = original
+
+        for i in range(100):
+            maximize_update(G)
+        data["maximize"].append(get_avg_score(G))
+        G = original
+
+    print(data)
+
+
+    # # Calls the function to see what the graph looks like and what the total score is and average score
+    # print_scores(G)
+    # pos = nx.spring_layout(G)
+    # nx.draw_networkx(G, pos)
+    # plt.show()
 
 
 main()
